@@ -57,11 +57,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private final Object lock = new Object(); // Lock object for synchronization
 
+    // custom radius set in meters
     private static final int PROXIMITY_RADIUS = 100000;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Bind items to corresponding layout
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mContext=getApplicationContext();
@@ -81,9 +83,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-        findNearbyAmusementParks();
+        // call method to find nearby parks
 
-
+        findNearbyParks();
         mRecyclerView=findViewById(R.id.recyclerView3);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -94,11 +96,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void findNearbyAmusementParks() {
+    private void findNearbyParks() {
 
+        //create ParkFinderTask object
         ParkFinderTask task = new ParkFinderTask(mMap,this::onParksFound);
-//        AmusementParkFinderTask task = new AmusementParkFinderTask(mMap);
-//
 
         // Define the place type
         String placeType = "park";
@@ -152,6 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // Search on the map
     private void createSearchViewListener(){
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
