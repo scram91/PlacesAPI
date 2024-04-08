@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import sweng888.scram.places.R;
+
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     private List<Park> parks;

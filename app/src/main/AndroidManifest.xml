@@ -32,18 +32,13 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
-
+            android:value="AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk" />
         <activity
-            android:name=".MapsActivity2"
-            android:exported="false"
-            android:label="@string/title_activity_maps2" />
-        <activity
-            android:name=".MainActivity"
+            android:name="sweng.dante.places.MainActivity"
             android:exported="false"
             android:label="Main Activity" />
         <activity
-            android:name=".MapsActivity"
+            android:name="sweng.dante.places.MapsActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

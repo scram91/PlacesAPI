@@ -38,13 +38,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import sweng.dante.places.databinding.ActivityMapsBinding;
+import sweng888.scram.places.R;
+
+import sweng888.scram.places.databinding.ActivityMapsBinding;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,ParkFinderCallback{
 
     private static final int REQUEST_CODE = 1001;
     private GoogleMap mMap;
-    private ActivityMapsBinding binding;
+   private ActivityMapsBinding binding;
 
     private Context mContext;
     private SearchView mSearchView;
@@ -52,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<Park> mParkList;
     RecyclerView mRecyclerView;
     Adapter mAdapter;
-
+    public Location enteredLocation;
     private FusedLocationProviderClient fusedLocationClient;
 
     private final Object lock = new Object(); // Lock object for synchronization
@@ -90,12 +92,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mParkList = new ArrayList<>();
-
-
-
     }
-
-
     private void findNearbyParks() {
 
         //create ParkFinderTask object
@@ -114,45 +111,76 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_CODE);
 
         }
-        mMap.setMyLocationEnabled(true);
+            mMap.setMyLocationEnabled(true);
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
 
-                if (location != null) {
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    LatLng currentLocation = new LatLng(latitude, longitude);
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10));
-
-
-                    // Define a query
-                    StringBuilder query = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
-                    query.append("location=").append(latitude).append(",").append(longitude);
-                    query.append("&radius=").append(PROXIMITY_RADIUS);
-                    query.append("&types=").append(placeType);
-                    query.append("&sensor=true");
-                    query.append("&key=").append("AIzaSyBAbYYFlvF_ZSiLDG9-kM5bY0GtY9ZFm50");
+                    if (location != null) {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        LatLng currentLocation = new LatLng(latitude, longitude);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10));
 
 
+                        // Define a query
+                        StringBuilder query = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+                        query.append("location=").append(latitude).append(",").append(longitude);
+                        query.append("&radius=").append(PROXIMITY_RADIUS);
+                        query.append("&types=").append(placeType);
+                        query.append("&sensor=true");
+                        query.append("&key=").append("AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk");
 
-                    // Perform the search
-                    task.execute(query.toString());
+
+                        // Perform the search
+                        task.execute(query.toString());
 
 
-                    // Proceed with using the currentLocation
-                } else {
-                    // Handle the case when last known location is null (e.g., display a message to the user)
-                    Toast.makeText(getApplicationContext(), "Last known location is not available", Toast.LENGTH_SHORT).show();
+                        // Proceed with using the currentLocation
+                    } else {
+                        // Handle the case when last known location is null (e.g., display a message to the user)
+                        Toast.makeText(getApplicationContext(), "Last known location is not available", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
-
-            }
-        });
-
-
+            });
     }
 
+public void searchForParks(Address location) {
+    //create ParkFinderTask object
+    ParkFinderTask task = new ParkFinderTask(mMap,this::onParksFound);
+
+    // Define the place type
+    String placeType = "park";
+
+
+    if (location != null) {
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+        LatLng currentLocation = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 10));
+
+
+        // Define a query
+        StringBuilder query = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+        query.append("location=").append(latitude).append(",").append(longitude);
+        query.append("&radius=").append(PROXIMITY_RADIUS);
+        query.append("&types=").append(placeType);
+        query.append("&sensor=true");
+        query.append("&key=").append("AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk");
+
+
+        // Perform the search
+        task.execute(query.toString());
+
+
+        // Proceed with using the currentLocation
+    } else {
+        // Handle the case when last known location is null (e.g., display a message to the user)
+        Toast.makeText(getApplicationContext(), "Last known location is not available", Toast.LENGTH_SHORT).show();
+    }
+}
     // Search on the map
     private void createSearchViewListener(){
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -171,23 +199,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 /** Create list of address where we will store the locations found **/
                 List<Address> addressList = null;
                 /** Check if the location is null */
-                if (locationName != null || locationName.equals("")){
-                    /** Initializing the geocode */
-                    Geocoder geocoder = new Geocoder(getApplicationContext());
-                    try {
-                        addressList = geocoder.getFromLocationName(locationName, 1);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                /** Initializing the geocode */
+                Geocoder geocoder = new Geocoder(getApplicationContext());
+                try {
+                    addressList = geocoder.getFromLocationName(locationName, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
 
-                    /** Getting the location in the first position */
-                    Address address = addressList.get(0);
-
-
-
+                /** Getting the location in the first position */
+                Address address = null;
+                if (addressList != null) {
+                    address = addressList.get(0);
                     /** Creating the LatLng object to store the address coordinates */
                     LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+
+                    searchForParks(address);
+
                     /** Add a marker */
                     mMap.addMarker(new MarkerOptions().position(latLng).title(locationName));
                     /** Animate the camera */
