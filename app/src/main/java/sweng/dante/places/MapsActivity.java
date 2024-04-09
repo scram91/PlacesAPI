@@ -130,7 +130,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         query.append("&radius=").append(PROXIMITY_RADIUS);
                         query.append("&types=").append(placeType);
                         query.append("&sensor=true");
-                        query.append("&key=").append("AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk");
+                        query.append("&key=").append("");
 
 
                         // Perform the search
@@ -168,7 +168,7 @@ public void searchForParks(Address location) {
         query.append("&radius=").append(PROXIMITY_RADIUS);
         query.append("&types=").append(placeType);
         query.append("&sensor=true");
-        query.append("&key=").append("AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk");
+        query.append("&key=").append("");
 
 
         // Perform the search
