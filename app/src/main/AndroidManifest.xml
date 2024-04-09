@@ -32,7 +32,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC2vkifl8EXv316cJy5jprIDcYUnYdU1Gk" />
+            " />
         <activity
             android:name="sweng.dante.places.MainActivity"
             android:exported="false"
